@@ -19,10 +19,10 @@ container.append(
 let allClock = [c1, c2, c3, c4, c5];
 
 const allButtonContainer = document.createElement('div');
-allButtonContainer.classList.add();
+allButtonContainer.classList.add('clock');
 
 const startAllButton = document.createElement('button');
-startAllButton.classList.add();
+startAllButton.classList.add('btn', 'btn-success', 'all-btn');
 startAllButton.innerText = 'Start All';
 startAllButton.addEventListener('click', () => {
 	allClock.forEach((e) => {
@@ -37,7 +37,7 @@ startAllButton.addEventListener('click', () => {
 });
 
 const pauseAllButton = document.createElement('button');
-pauseAllButton.classList.add();
+pauseAllButton.classList.add('btn', 'btn-warning', 'all-btn');
 pauseAllButton.textContent = 'Pause All';
 pauseAllButton.addEventListener('click', () => {
 	allClock.forEach((e) => {
@@ -47,7 +47,7 @@ pauseAllButton.addEventListener('click', () => {
 });
 
 const stopAllButton = document.createElement('button');
-stopAllButton.classList.add();
+stopAllButton.classList.add('btn', 'btn-danger', 'all-btn');
 stopAllButton.textContent = 'Stop All';
 stopAllButton.addEventListener('click', () => {
 	allClock.forEach((e) => {
@@ -58,5 +58,5 @@ stopAllButton.addEventListener('click', () => {
 	});
 });
 
-allButtonContainer.append(stopAllButton, pauseAllButton, startAllButton);
+allButtonContainer.append(startAllButton, pauseAllButton, stopAllButton);
 container.appendChild(allButtonContainer);

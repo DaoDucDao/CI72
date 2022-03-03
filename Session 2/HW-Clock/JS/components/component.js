@@ -17,24 +17,24 @@ export class Clock {
 
 		this.$clockContainer = document.createElement('div');
 		this.$clockContainer.id = clock_ID;
-		this.$clockContainer.classList.add();
+		this.$clockContainer.classList.add('clock');
 
 		this.$display = document.createElement('div');
 		this.$display.textContent = '00:00';
-		this.$display.classList.add();
+		this.$display.classList.add('display');
 
 		this.$start = document.createElement('button');
 		this.$start.innerText = 'Start';
-		this.$start.classList.add();
+		this.$start.classList.add('btn', 'btn-success', 'all-btn');
 		this.$start.addEventListener('click', this.handleStart);
 
 		this.$pause = document.createElement('button');
-		this.$pause.classList.add();
+		this.$pause.classList.add('btn', 'btn-warning', 'all-btn');
 		this.$pause.addEventListener('click', this.handlePause);
 		this.$pause.innerText = 'Pause';
 
 		this.$stop = document.createElement('button');
-		this.$stop.classList.add();
+		this.$stop.classList.add('btn', 'btn-danger', 'all-btn');
 		this.$stop.addEventListener('click', this.handleStop);
 		this.$stop.innerText = 'Stop';
 	}

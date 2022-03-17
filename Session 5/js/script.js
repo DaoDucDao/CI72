@@ -14,18 +14,23 @@ class App {
 	$activeScreen;
 
 	constructor() {
-		this.checkLogined();
+		this.setUpAuthListener();
 	}
 
-	checkLogined() {
-		const emailLogined = localStorage.getItem('emailLogined');
-		let screen;
-		if (emailLogined) {
-			screen = new MainScreen();
-		} else {
-			screen = new LoginScreen();
-		}
-		this.changeActiveScreen(screen); // setting the main screen active if we have already signed in
+	setUpAuthListener() {
+		// const emailLogined = localStorage.getItem('emailLogined');
+		// let screen;
+		// if (emailLogined) {
+		// 	screen = new MainScreen();
+		// } else {
+		// 	screen = new LoginScreen();
+		// }
+		// this.changeActiveScreen(screen); // setting the main screen active if we have already signed in
+		firebase.auth().onAuthStateChanged(function (user) {
+			if (user) {
+				console.log(user);
+			}
+		});
 	}
 
 	changeActiveScreen(screen) {

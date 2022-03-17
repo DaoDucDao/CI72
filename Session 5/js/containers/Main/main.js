@@ -6,7 +6,7 @@ export class MainScreen {
 		this.$container.innerText = 'MAIN SCREEN';
 	}
 
-	render() {
-		return this.$container;
+	render(appEle) {
+		appEle.appendChild(this.$container);
 	}
 }

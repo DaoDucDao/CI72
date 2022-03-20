@@ -48,4 +48,8 @@ const loginWithEmailPassword = async (email, password) => {
 	localStorage.setItem('uid', user.uid);
 	return user;
 };
-export { createNewAccount, loginWithEmailPassword };
+
+const getCurrentUser = () => {
+	return firebase.auth().currentUser;
+};
+export { createNewAccount, loginWithEmailPassword, getCurrentUser };

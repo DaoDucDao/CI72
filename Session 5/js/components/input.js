@@ -31,6 +31,15 @@ class InputComponent {
 		this.$error.classList.remove('d-none');
 		this.$error.classList.add('d-block');
 	}
+
+	setAttribute(name, value) {
+		this.$input.setAttribute(name, value);
+	}
+
+	setEventListener(event, callbackFunction) {
+		this.$input.addEventListener(event, callbackFunction);
+	}
+
 	render() {
 		this.$container.append(this.$label, this.$containerInput);
 		this.$containerInput.append(this.$input, this.$error);

@@ -89,4 +89,7 @@ body {
 	height: 150px;
 	border-radius: 100px;
 	border: 1px solid rgb(37, 124, 117);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
 }

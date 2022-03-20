@@ -11,4 +11,4 @@ const appFB = firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
-export default appFB;
+export default db;

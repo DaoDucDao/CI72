@@ -30,7 +30,7 @@ class App {
 		firebase.auth().onAuthStateChanged((user) => {
 			let screen;
 
-			console.log(user);
+			// console.log(user);
 
 			if (user && user.emailVerified) {
 				screen = new InfoScreen();

@@ -70,14 +70,14 @@ class LoginScreen {
 		let isError = false;
 
 		// console.log('email', email.value, 'password', password.value);
-		if (checkEmail(email.value) !== null) {
+		if (!checkEmail(email.value)) {
 			// console.log('Email is Invalid!');
 			this.$email.setError(checkEmail(email.value));
 			isError = true;
 		} else {
 			this.$email.setError('');
 		}
-		if (checkPassword(password.value) !== null) {
+		if (!checkPassword(password.value)) {
 			// console.log('Password is Invalid!');
 			this.$password.setError(checkPassword(password.value));
 			isError = true;
@@ -97,7 +97,7 @@ class LoginScreen {
 
 	setLoading() {}
 
-	render() {
+	render(appEle) {
 		this.$formLogin.append(
 			this.$titleScreen,
 			this.$email.render(),
@@ -106,7 +106,8 @@ class LoginScreen {
 			this.$link
 		);
 		this.$container.appendChild(this.$formLogin);
-		return this.$container;
+
+		appEle.appendChild(this.$container);
 	}
 }
 export default LoginScreen;

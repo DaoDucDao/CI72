@@ -77,7 +77,7 @@ class RegisterScreen {
 		let isError = false;
 
 		// console.log('email', email.value, 'password', password.value);
-		if (checkEmail(email.value) !== null) {
+		if (!checkEmail(email.value)) {
 			// console.log('Email is Invalid!');
 			this.$email.setError(checkEmail(email.value));
 			isError = true;
@@ -85,7 +85,7 @@ class RegisterScreen {
 			this.$email.setError('');
 		}
 
-		if (checkPassword(password.value) !== null) {
+		if (!checkPassword(password.value)) {
 			// console.log('Password is Invalid!');
 			this.$password.setError(checkPassword(password.value));
 			isError = true;
@@ -93,7 +93,7 @@ class RegisterScreen {
 			this.$password.setError('');
 		}
 
-		if (checkPassword(rePassword.value) !== null) {
+		if (!checkPassword(rePassword.value)) {
 			// console.log('Password is Invalid!');
 			this.$rePassword.setError(checkPassword(rePassword.value));
 			isError = true;
@@ -111,7 +111,7 @@ class RegisterScreen {
 			app.changeActiveScreen(checkScreen);
 		}
 	};
-	render() {
+	render(appEle) {
 		this.$formLogin.append(
 			this.$titleScreen,
 			this.$email.render(),
@@ -121,7 +121,7 @@ class RegisterScreen {
 			this.$link
 		);
 		this.$container.appendChild(this.$formLogin);
-		return this.$container;
+		appEle.appendChild(this.$container);
 	}
 }
 export default RegisterScreen;

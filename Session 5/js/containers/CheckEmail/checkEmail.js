@@ -1,6 +1,6 @@
 class CheckEmailScreen {
 	$mailContainer;
-
+	$btnMail;
 	constructor() {
 		this.$mailContainer = document.createElement('div');
 		this.$mailContainer.innerHTML = `
@@ -28,13 +28,19 @@ class CheckEmailScreen {
                 If you wait it too long. You can
                 <a href="mailto:"  class='link'>click here</a> to login
                 </p>
+                <button id= 'open-gmail' type = 'button' class = 'btn btn-primary'> Primary </button>
             </div>
             </div>
         </div>
         `;
 	}
-	render() {
-		return this.$mailContainer;
+	render(appEle) {
+		appEle.appendChild(this.$mainContainer);
+
+		this.$btnMail = document.getElementById('open-gmail');
+		this.$btnMail.addEventListener('click', () => {
+			window.location.href = 'https://mail.google.com/mail/u/0/#inbox';
+		});
 	}
 }
 export default CheckEmailScreen;

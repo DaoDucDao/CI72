@@ -2,6 +2,7 @@ import LoginScreen from './containers/Login/login.js';
 import RegisterScreen from './containers/Register/register.js';
 import CheckEmailScreen from './containers/CheckEmail/checkEmail.js';
 import { MainScreen } from './containers/Main/main.js';
+import InfoScreen from './containers/Infor/infor.js';
 
 // const app = document.getElementById('app');
 
@@ -26,10 +27,19 @@ class App {
 		// 	screen = new LoginScreen();
 		// }
 		// this.changeActiveScreen(screen); // setting the main screen active if we have already signed in
-		firebase.auth().onAuthStateChanged(function (user) {
-			if (user) {
-				console.log(user);
+		firebase.auth().onAuthStateChanged((user) => {
+			let screen;
+
+			console.log(user);
+
+			if (user && user.emailVerified) {
+				screen = new InfoScreen();
+			} else if (user && !user.emailVerified) {
+				screen = new CheckEmailScreen();
+			} else {
+				screen = new LoginScreen();
 			}
+			this.changeActiveScreen(screen);
 		});
 	}
 
@@ -40,7 +50,7 @@ class App {
 				appEle.innerHTML = '';
 			}
 			this.$activeScreen = screen;
-			appEle.appendChild(screen.render());
+			screen.render(appEle);
 		}
 	}
 }

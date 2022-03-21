@@ -22,6 +22,8 @@ class InfoScreen {
 
 	$buttonSubmit;
 
+	$existUser;
+
 	constructor() {
 		this.$container = document.createElement('div');
 		this.$container.classList.add('info-screen');
@@ -81,11 +83,25 @@ class InfoScreen {
 			'd-block',
 			'mt-3',
 		]);
+
+		this.handleFetchUserByEmail();
 	}
 
-	handleFetchUserByEmail() {
+	async handleFetchUserByEmail() {
+		//Because fetch is an async function (that's the rule)
 		const user = getCurrentUser();
-		getUserByEmail(user.email);
+		const userStored = await getUserByEmail(user.email);
+		if (userStored) {
+			this.$existUser = true;
+
+			this.$name.setAttribute('value', userStored.name);
+			this.$phone.setAttribute('value', userStored.phone);
+			this.$imageUrl.setAttribute('value', userStored.imgURL);
+
+			this.$avatar.style.backgroundImage = `url(${userStored.imgURL})`;
+		} else {
+			this.$existUser = false;
+		}
 	}
 
 	handleChangeAvatar = (e) => {

@@ -20,13 +20,30 @@ async function createUser(email, password, name, phone, imgURL) {
 }
 
 async function getUserByEmail(email) {
-	db.collection('users') //point at the users collection
-		.get()
-		.then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				console.log(`${doc.id} => ${doc.data()}`);
-			});
-		});
+	// Because to functioning with firebase data so we need to try catch it
+	// console.log(email);
+	try {
+		const querySnapshot = await db //this querySnapshot is an array
+			.collection('users') //point at the users collection
+			.where('email', '==', email)
+			.get();
+
+		if (querySnapshot.docs === 0) {
+			return null;
+		}
+		// 		.then((querySnapshot) => {
+		// 			querySnapshot.forEach((doc) => {
+		// 				// console.log(`${doc.id} => ${doc.data()}`); //this will log out the ID and also the object type of the data
+		// 				console.log(doc.data());
+		// 			});
+		// 		});
+		return querySnapshot.docs[0].data(); // Normally, when we fetch an API, we have to parse the data, but firebase has data() that parse data for us already
+	} catch (error) {
+		let errorCode = error.code;
+		let errorMessage = error.message;
+		console.log(errorCode, errorMessage);
+		_noti.error(errorCode, errorMessage);
+	}
 }
 
 export { createUser, getUserByEmail };

@@ -1,10 +1,18 @@
+import { checkName, checkPhone } from '../../common/validation.js';
 import ButtonComponent from '../../components/button.js';
 import InputComponent from '../../components/input.js';
 import {
 	createNewAccount,
 	getCurrentUser,
 } from '../../fireBase/authentication.js';
-import { createUser, getUserByEmail } from '../../fireBase/store.js';
+import {
+	createUser,
+	getUserByEmail,
+	updateUser,
+} from '../../fireBase/store.js';
+import { MainScreen } from '../Main/main.js';
+import appContainer from '../../script.js';
+import * as _noti from '../../common/notify.js';
 
 class InfoScreen {
 	$container;
@@ -22,7 +30,7 @@ class InfoScreen {
 
 	$buttonSubmit;
 
-	$existUser;
+	$userID;
 
 	constructor() {
 		this.$container = document.createElement('div');
@@ -92,7 +100,7 @@ class InfoScreen {
 		const user = getCurrentUser();
 		const userStored = await getUserByEmail(user.email);
 		if (userStored) {
-			this.$existUser = true;
+			this.$userID = userStored.id;
 
 			this.$name.setAttribute('value', userStored.name);
 			this.$phone.setAttribute('value', userStored.phone);
@@ -100,7 +108,7 @@ class InfoScreen {
 
 			this.$avatar.style.backgroundImage = `url(${userStored.imgURL})`;
 		} else {
-			this.$existUser = false;
+			this.$userID = '';
 		}
 	}
 
@@ -109,12 +117,47 @@ class InfoScreen {
 		this.$avatar.style.backgroundImage = `url(${e.target.value})`;
 	}; //only JPG file
 
-	handleSubmit = (e) => {
-		e.preventDefault();
-		const { name, phone, imgURL } = e.target;
-		// console.log([name.value, phone.value, imgURL.value]);
-		const user = getCurrentUser();
-		createUser(user.email, '', name.value, phone.value, imgURL.value);
+	handleSubmit = async (e) => {
+		try {
+			e.preventDefault();
+			const { name, phone, imgURL } = e.target;
+			// console.log([name.value, phone.value, imgURL.value]);
+			const user = getCurrentUser();
+
+			let isError = false;
+			if (checkName(name.value)) {
+				isError = true;
+				this.$name.setError(checkName(name.value));
+			} else {
+				this.$name.setError('');
+			}
+
+			if (checkPhone(phone.value)) {
+				isError = true;
+				this.$phone.setError(checkPhone(phone.value));
+			} else {
+				this.$phone.setError('');
+			}
+			if (isError) {
+				return;
+			}
+
+			if (this.$userID) {
+				await updateUser(
+					this.$userID,
+					user.email,
+					name.value,
+					phone.value,
+					imgURL.value
+				);
+			} else {
+				createUser(user.email, '', name.value, phone.value, imgURL.value);
+			}
+			const newMain = new MainScreen();
+			appContainer.changeActiveScreen(newMain);
+		} catch (error) {
+			_noti.error(error.errorCode, error.errorMessage);
+		}
 	};
 
 	render(appEle) {

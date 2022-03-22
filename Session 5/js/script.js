@@ -33,7 +33,9 @@ class App {
 			// console.log(user);
 
 			if (user && user.emailVerified) {
-				screen = new InfoScreen();
+				// TODO:
+				// screen = new InfoScreen();
+				screen = new MainScreen();
 			} else if (user && !user.emailVerified) {
 				screen = new CheckEmailScreen();
 			} else {

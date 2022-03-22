@@ -16,6 +16,7 @@ async function createUser(email, password, name, phone, imgURL) {
 		let errorMessage = error.message;
 		console.log(errorCode, errorMessage);
 		_noti.error(errorCode, errorMessage);
+		throw error;
 	}
 }
 
@@ -37,13 +38,32 @@ async function getUserByEmail(email) {
 		// 				console.log(doc.data());
 		// 			});
 		// 		});
-		return querySnapshot.docs[0].data(); // Normally, when we fetch an API, we have to parse the data, but firebase has data() that parse data for us already
+		return {
+			id: querySnapshot.docs[0].id,
+			...querySnapshot.docs[0].data(), // Normally, when we fetch an API, we have to parse the data, but firebase has data() that parse data for us already
+		};
 	} catch (error) {
 		let errorCode = error.code;
 		let errorMessage = error.message;
 		console.log(errorCode, errorMessage);
 		_noti.error(errorCode, errorMessage);
+		throw error;
 	}
 }
 
-export { createUser, getUserByEmail };
+async function updateUser(uid, email, name, phone, imgURL) {
+	try {
+		const response = await db
+			.collection('users')
+			.doc(uid)
+			.update({ email, name, phone, imgURL });
+		console.log(response);
+	} catch (error) {
+		let errorCode = error.code;
+		let errorMessage = error.message;
+		console.log(errorCode, errorMessage);
+		throw error;
+	}
+}
+
+export { createUser, getUserByEmail, updateUser };

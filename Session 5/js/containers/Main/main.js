@@ -22,6 +22,6 @@ export class MainScreen {
 		appEle.appendChild(this.$container);
 
 		this.$container.append(this.$paper);
-		this.$paper.append(this.$sidebarComponent.render());
+		this.$sidebarComponent.render(this.$paper);
 	}
 }

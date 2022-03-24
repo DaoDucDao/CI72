@@ -1,4 +1,8 @@
+import { checkName } from '../../../common/validation.js';
 import SidebarItem from './sidebar-item.js';
+import * as _noti from '../../../common/notify.js';
+import { createConversation } from '../../../fireBase/store.js';
+import { getCurrentUser } from '../../../fireBase/authentication.js';
 
 class sideBarComponent {
 	$container;
@@ -84,11 +88,30 @@ class sideBarComponent {
 		buttonClose.click();
 	};
 
-	handleCreate = () => {
-		const name = document.getElementById('name-conversation');
-		const imageURL = document.getElementById('img-conversation');
-		console.log(name.value, imageURL.value);
-		this.handleClose();
+	handleCreate = async () => {
+		try {
+			const name = document.getElementById('name-conversation');
+			const imageURL = document.getElementById('img-conversation');
+			const user = getCurrentUser();
+
+			console.log(name.value, imageURL.value);
+
+			if (checkName(name.value)) {
+				_noti.warning('Conversation name', checkName(name.value));
+				return;
+			}
+			await createConversation(
+				name.value,
+				imageURL.value,
+				'',
+				[user.email],
+				user.email
+			);
+
+			this.handleClose();
+		} catch (error) {
+			_noti.error(error.code, error.message);
+		}
 	};
 
 	render(parentContainer) {

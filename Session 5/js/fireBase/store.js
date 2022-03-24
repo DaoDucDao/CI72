@@ -66,4 +66,22 @@ async function updateUser(uid, email, name, phone, imgURL) {
 	}
 }
 
-export { createUser, getUserByEmail, updateUser };
+async function createConversation(name, imgURL, desc, users, email) {
+	try {
+		const response = await db.collection('conversations').add({
+			name,
+			imgURL,
+			description: desc,
+			users,
+			createdBy: email,
+		});
+		console.log(response);
+	} catch (error) {
+		let errorCode = error.code;
+		let errorMessage = error.message;
+		console.log(errorCode, errorMessage);
+		throw error;
+	}
+}
+
+export { createUser, getUserByEmail, updateUser, createConversation };

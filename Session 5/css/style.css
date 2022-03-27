@@ -103,7 +103,7 @@ body {
 }
 
 .chat-paper {
-	width: 65%;
+	width: 75%;
 	height: 80vh;
 	min-width: 580px;
 	min-height: 400px;
@@ -118,7 +118,7 @@ body {
 	flex-direction: column;
 	border-radius: 20px;
 	color: white;
-	width: 30%;
+	width: 35%;
 	max-width: 300px;
 	min-width: 220px;
 	position: relative;
@@ -207,6 +207,10 @@ body {
 	border: 1px solid #ffffff50;
 }
 
+.cs-item:hover {
+	border: 1px solid white;
+	background-color: #ffffff50;
+}
 .cs-avatar {
 	width: 50px;
 	height: 50px;
@@ -221,7 +225,9 @@ body {
 }
 
 .cs-sub-container {
-	/* font-size: ; */
+	width: calc(
+		100% - 80px
+	); /* move the sub-container to the right of the chat */
 	margin-left: 8px;
 }
 
@@ -239,4 +245,68 @@ body {
 	line-height: 19px;
 	font-weight: 400px;
 }
-/* 25' */
+
+#exampleModalLabel {
+	color: #333333;
+}
+
+.btn-show-more {
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	border-radius: 100%;
+	background-image: url('../images/more.png');
+	transition: all 0.15s ease-out;
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+	position: relative;
+	visibility: hidden;
+	opacity: 0;
+}
+
+.cs-item:hover .btn-show-more {
+	visibility: visible;
+	opacity: 1;
+}
+
+.cs-list {
+	height: 100%;
+	overflow: auto; /* this set the sidebar-container to list form that we can scroll on it which make the list doesn't jump out of the container*/
+}
+
+.cs-popup {
+	position: absolute;
+	top: 100%;
+	right: 0%;
+	width: 100px;
+	height: auto;
+	background: white;
+	color: #333;
+	display: flex;
+	flex-direction: column;
+	border-radius: 10px;
+	padding: 8px;
+	z-index: 10;
+
+	display: none;
+	visibility: hidden;
+	opacity: 0;
+}
+
+.btn-popup {
+	cursor: pointer;
+	height: 25px;
+	border-radius: 4px;
+	padding: 0px 4px;
+}
+
+.btn-popup:hover {
+	background-color: #dfdfdf;
+}
+
+.show {
+	display: flex;
+	visibility: visible;
+	opacity: 1;
+}

@@ -20,9 +20,21 @@ class SidebarItem {
 	$users;
 	$creator;
 
-	constructor() {
+	$item;
+	// conversation {
+	// 	id,
+	// 	name,
+	// 	imgURL,
+	// 	users,
+	// 	creator
+	// }
+
+	constructor(conversation) {
+		this.$item = conversation;
+
 		this.$container = document.createElement('div');
 		this.$container.classList.add('flex', 'cs-item');
+		this.$container.addEventListener('mouseleave', this.handleHiddenPopup);
 
 		this.$imageEle = document.createElement('div');
 		this.$imageEle.classList.add('cs-avatar');
@@ -44,6 +56,7 @@ class SidebarItem {
 
 		this.$buttonMore = document.createElement('div');
 		this.$buttonMore.classList.add('btn-show-more');
+		this.$buttonMore.addEventListener('click', this.handleToggle);
 
 		this.$buttonUpdate = document.createElement('div');
 		this.$buttonUpdate.classList.add('btn-popup');
@@ -52,7 +65,43 @@ class SidebarItem {
 		this.$buttonDelete = document.createElement('div');
 		this.$buttonDelete.classList.add('btn-popup');
 		this.$buttonDelete.innerText = 'Delete';
+
+		//setup data
+		this.setUpData();
 	}
+
+	setUpData = (cons) => {
+		this.$id = cons.id;
+		this.$name = cons.name;
+		this.$imageUrl = cons.imageUrl;
+		this.$description = `${cons.users.length} user(s)`;
+		this.$users = cons.users;
+		this.$creator = cons.creator;
+
+		this.fillDataToEle();
+	};
+
+	fillDataToEle = () => {
+		this.$imageEle.style.backgroundImage = `url ${this.$imageUrl}`;
+		this.$nameEle.innerText = this.$name;
+		this.$descEle.innerText = this.$description;
+	};
+
+	handleHiddenPopup = () => {
+		if (this.$popupContainer.classList.contains('show')) {
+			this.$popupContainer.classList.remove('show');
+		}
+	}; //this function prevent the popup still on when the chat is not hover anymore
+
+	handleToggle = (e) => {
+		e.preventDefault();
+		if (this.$popupContainer.classList.contains('show')) {
+			this.$popupContainer.classList.remove('show');
+		} else {
+			this.$popupContainer.classList.add('show');
+		}
+	};
+
 	render() {
 		this.$container.append(
 			this.$imageEle,
@@ -61,8 +110,13 @@ class SidebarItem {
 		);
 		this.$subContainer.append(this.$nameEle, this.$descEle);
 		this.$actionContainer.append(this.$buttonMore);
+
+		this.$buttonMore.append(this.$popupContainer);
+
+		this.$popupContainer.append(this.$buttonUpdate, this.$buttonDelete);
 		return this.$container;
 	}
 }
 
 export default SidebarItem;
+// 1h49'48s

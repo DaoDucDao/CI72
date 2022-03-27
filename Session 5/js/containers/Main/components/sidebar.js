@@ -2,6 +2,7 @@ import { checkName } from '../../../common/validation.js';
 import SidebarItem from './sidebar-item.js';
 import * as _noti from '../../../common/notify.js';
 import { createConversation } from '../../../fireBase/store.js';
+import db from '../../../fireBase/fireBase.js';
 import { getCurrentUser } from '../../../fireBase/authentication.js';
 
 class sideBarComponent {
@@ -9,11 +10,11 @@ class sideBarComponent {
 
 	$title;
 	$buttonCreate;
+	$modal;
 
-	$listItems;
 	$listContainer;
 
-	$modal;
+	$listItems = [];
 
 	constructor() {
 		this.$container = document.createElement('div');
@@ -32,11 +33,35 @@ class sideBarComponent {
 		this.$listContainer = document.createElement('div');
 		this.$listContainer.classList.add('cs-list');
 
-		this.$listItems = new Array(10)
-			.fill(1)
-			.map((i) => new SidebarItem().render());
-
 		this.renderModal();
+		this.setUpConversationListener();
+	}
+
+	setUpConversationListener() {
+		const user = getCurrentUser();
+		db.collection('conversations')
+			.where('users', 'array-contains', user.email)
+			.onSnapshot((snapshot) => {
+				snapshot.docChanges().forEach((change) => {
+					if (change.type === 'added') {
+						console.log(change.doc.data());
+						const addedConversation = new SidebarItem({
+							...change.doc.data(),
+							id: change.doc.id,
+						});
+						// this.$listItems.push(addConversation.render());
+						this.$listContainer.append(addedConversation.render()); //we do this so every time we new that SidebarItem(), we push the doc.data in already
+					}
+					if (change.type === 'modified') {
+						console.log(change.doc.data());
+						console.log('something2');
+					}
+					if (change.type === 'removed') {
+						console.log(change.doc.data());
+						console.log('something3');
+					}
+				});
+			});
 	}
 
 	renderModal() {
@@ -103,7 +128,6 @@ class sideBarComponent {
 			await createConversation(
 				name.value,
 				imageURL.value,
-				'',
 				[user.email],
 				user.email
 			);
@@ -122,7 +146,6 @@ class sideBarComponent {
 			this.$listContainer,
 			this.$modal //for this modal, we can put it anywhere in render
 		);
-		this.$listContainer.append(...this.$listItems);
 
 		document
 			.getElementById('btn-create-converstation')

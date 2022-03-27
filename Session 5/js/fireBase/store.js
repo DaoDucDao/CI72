@@ -66,14 +66,14 @@ async function updateUser(uid, email, name, phone, imgURL) {
 	}
 }
 
-async function createConversation(name, imgURL, desc, users, email) {
+async function createConversation(name, imgURL, users, email) {
 	try {
 		const response = await db.collection('conversations').add({
 			name,
 			imgURL,
-			description: desc,
 			users,
-			createdBy: email,
+			creator: email,
+			updateAt: new Date().getTime(),
 		});
 		console.log(response);
 	} catch (error) {
@@ -84,4 +84,40 @@ async function createConversation(name, imgURL, desc, users, email) {
 	}
 }
 
-export { createUser, getUserByEmail, updateUser, createConversation };
+async function updateConversation(id, name, imgURL, users, email) {
+	try {
+		const response = await db.collection('conversations').doc(id).update({
+			name,
+			imgURL,
+			users,
+			creator: email,
+			updateAt: new Date().getTime(),
+		});
+		console.log(response);
+	} catch (error) {
+		let errorCode = error.code;
+		let errorMessage = error.message;
+		console.log(errorCode, errorMessage);
+		throw error;
+	}
+}
+
+async function deleteConversation() {
+	try {
+		const response = await db.collection('conversations').doc(id).delete();
+	} catch (error) {
+		let errorCode = error.code;
+		let errorMessage = error.message;
+		console.log(errorCode, errorMessage);
+		throw error;
+	}
+}
+
+export {
+	createUser,
+	getUserByEmail,
+	updateUser,
+	createConversation,
+	updateConversation,
+	deleteConversation,
+};

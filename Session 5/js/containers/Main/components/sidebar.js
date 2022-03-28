@@ -44,11 +44,13 @@ class sideBarComponent {
 			.onSnapshot((snapshot) => {
 				snapshot.docChanges().forEach((change) => {
 					if (change.type === 'added') {
-						console.log(change.doc.data());
+						// console.log(change.doc.data());
+
 						const addedConversation = new SidebarItem({
 							...change.doc.data(),
 							id: change.doc.id,
 						});
+
 						// this.$listItems.push(addConversation.render());
 						this.$listContainer.append(addedConversation.render()); //we do this so every time we new that SidebarItem(), we push the doc.data in already
 					}

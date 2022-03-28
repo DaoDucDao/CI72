@@ -36,7 +36,7 @@ class SidebarItem {
 		this.$container.classList.add('flex', 'cs-item');
 		this.$container.addEventListener('mouseleave', this.handleHiddenPopup);
 
-		this.$imageEle = document.createElement('div');
+		this.$imageEle = document.createElement('img');
 		this.$imageEle.classList.add('cs-avatar');
 
 		this.$subContainer = document.createElement('div');
@@ -66,14 +66,17 @@ class SidebarItem {
 		this.$buttonDelete.classList.add('btn-popup');
 		this.$buttonDelete.innerText = 'Delete';
 
+		// console.log(conversation);
+
 		//setup data
-		this.setUpData();
+		this.setUpData(this.$item);
 	}
 
 	setUpData = (cons) => {
+		console.log(cons);
 		this.$id = cons.id;
 		this.$name = cons.name;
-		this.$imageUrl = cons.imageUrl;
+		this.$imageUrl = cons.imgURL;
 		this.$description = `${cons.users.length} user(s)`;
 		this.$users = cons.users;
 		this.$creator = cons.creator;
@@ -82,7 +85,7 @@ class SidebarItem {
 	};
 
 	fillDataToEle = () => {
-		this.$imageEle.style.backgroundImage = `url ${this.$imageUrl}`;
+		this.$imageEle.style.backgroundImage = `url(${this.$imageUrl})`; //this bug due to the privacy of the image on fucking Google
 		this.$nameEle.innerText = this.$name;
 		this.$descEle.innerText = this.$description;
 	};

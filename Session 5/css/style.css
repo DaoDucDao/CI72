@@ -221,7 +221,7 @@ body {
 
 	border-radius: 100%;
 	border: 1px solid #ffffff50;
-	background-image: url('../images/something.png'); /* PNG file is the image that has no background colour*/
+	/* background-image: url('../images/something.png'); PNG file is the image that has no background colour */
 }
 
 .cs-sub-container {

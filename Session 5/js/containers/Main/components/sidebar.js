@@ -1,7 +1,11 @@
 import { checkName } from '../../../common/validation.js';
 import SidebarItem from './sidebar-item.js';
 import * as _noti from '../../../common/notify.js';
-import { createConversation } from '../../../fireBase/store.js';
+import {
+	createConversation,
+	deleteConversation,
+	updateConversation,
+} from '../../../fireBase/store.js';
 import db from '../../../fireBase/fireBase.js';
 import { getCurrentUser } from '../../../fireBase/authentication.js';
 
@@ -14,7 +18,10 @@ class sideBarComponent {
 
 	$listContainer;
 
-	$listItems = [];
+	// $listItems = [];
+	$objectItems = {}; //Instead of putting the data into an array, we put it in an object
+
+	$updateConversation;
 
 	constructor() {
 		this.$container = document.createElement('div');
@@ -29,6 +36,7 @@ class sideBarComponent {
 		this.$buttonCreate.setAttribute('data-bs-toggle', 'modal');
 		this.$buttonCreate.setAttribute('data-bs-target', '#conversationModal');
 		this.$buttonCreate.innerText = '+';
+		this.$buttonCreate.addEventListener('click', this.resetDataModal);
 
 		this.$listContainer = document.createElement('div');
 		this.$listContainer.classList.add('cs-list');
@@ -36,6 +44,27 @@ class sideBarComponent {
 		this.renderModal();
 		this.setUpConversationListener();
 	}
+
+	handleUpdateCon = (currentUpdateCon) => {
+		this.$updateConversation = currentUpdateCon; //Here we get the whole item object out and take the name only to set a new name for the modal
+		const titleModal = document.getElementById('modalTittle');
+		const btnSubmitModal = document.getElementById('btn-create-converstation');
+		if (titleModal) {
+			titleModal.innerText = currentUpdateCon.name;
+		}
+		if (btnSubmitModal) {
+			btnSubmitModal.setAttribute('id-update', currentUpdateCon.id);
+		}
+
+		this.$buttonCreate.click();
+	};
+	handleDeleteCon = (id, name) => {
+		_noti.confirm(
+			`Are you sure you want to delete ${name}`,
+			'Your file has been deleted',
+			() => deleteConversation(id)
+		);
+	};
 
 	setUpConversationListener() {
 		const user = getCurrentUser();
@@ -46,21 +75,46 @@ class sideBarComponent {
 					if (change.type === 'added') {
 						// console.log(change.doc.data());
 
-						const addedConversation = new SidebarItem({
+						const newConversation = {
 							...change.doc.data(),
 							id: change.doc.id,
-						});
+						};
+						const addedConversation = new SidebarItem(
+							newConversation,
+							this.handleUpdateCon,
+							this.handleDeleteCon
+						);
 
-						// this.$listItems.push(addConversation.render());
+						// this.$listItems.push(addedConversation); //we dont need to render() here because the addedConversation is an object that we push inside the array
+						this.$objectItems[change.doc.id] = addedConversation;
 						this.$listContainer.append(addedConversation.render()); //we do this so every time we new that SidebarItem(), we push the doc.data in already
 					}
 					if (change.type === 'modified') {
+						//Every time we make change, which firebase recognize this action is MODIFIED, it will send us back the data we changed
+						//And this data will be caught by this setUpConversationListener() function
+						//But we need the old data because we only update it in, before that we have already saved them in that listItems[] or the objectItems{}
 						console.log(change.doc.data());
 						console.log('something2');
+
+						// const updatedConversation = this.$listItems.find(
+						// (item) => item.$id === change.doc.id
+						// );
+						// // Here we find the item of which id is identical to the firebase id
+						// //	Then we fetch it out
+						if (this.$objectItems[change.doc.id]) {
+							// I changed it to object[value] so that we dont have to use find() function of the array
+							this.$objectItems[change.doc.id].setUpData(
+								{
+									...change.doc.data(),
+									id: change.doc.id,
+								},
+								this.handleUpdateCon,
+								this.handleDeleteCon
+							);
+						}
 					}
 					if (change.type === 'removed') {
-						console.log(change.doc.data());
-						console.log('something3');
+						this.$objectItems[change.doc.id].unMount();
 					}
 				});
 			});
@@ -112,13 +166,28 @@ class sideBarComponent {
 		name.value = '';
 		imageURL.value = '';
 
-		buttonClose.click();
+		this.$updateConversation = null;
+
+		const titleModal = document.getElementById('modalTittle');
+		const btnSubmitModal = document.getElementById('btn-create-converstation');
+
+		titleModal.innerText = 'Create New Conversation';
+		if (btnSubmitModal.hasAttribute('id-update')) {
+			btnSubmitModal.removeAttribute('id-update');
+		}
+
+		buttonClose.click(); //Here, we reset the titleModal to 'Create New Conversation' only when we click to the close button
+		// While we need the titleModal resetting itself when we click outside the modal
 	};
 
-	handleCreate = async () => {
+	handleSubmit = async () => {
 		try {
 			const name = document.getElementById('name-conversation');
 			const imageURL = document.getElementById('img-conversation');
+			const btnSubmitModal = document.getElementById(
+				'btn-create-converstation'
+			);
+
 			const user = getCurrentUser();
 
 			console.log(name.value, imageURL.value);
@@ -127,12 +196,23 @@ class sideBarComponent {
 				_noti.warning('Conversation name', checkName(name.value));
 				return;
 			}
-			await createConversation(
-				name.value,
-				imageURL.value,
-				[user.email],
-				user.email
-			);
+
+			if (btnSubmitModal.hasAttribute('id-update')) {
+				await updateConversation(
+					this.$updateConversation.id,
+					name.value,
+					imageURL.value,
+					this.$updateConversation.users,
+					this.$updateConversation.creator
+				);
+			} else {
+				await createConversation(
+					name.value,
+					imageURL.value,
+					[user.email],
+					user.email
+				);
+			}
 
 			this.handleClose();
 		} catch (error) {
@@ -151,7 +231,7 @@ class sideBarComponent {
 
 		document
 			.getElementById('btn-create-converstation')
-			.addEventListener('click', this.handleCreate);
+			.addEventListener('click', this.handleSubmit);
 
 		document
 			.getElementById('btn-icon-close')

@@ -102,7 +102,7 @@ async function updateConversation(id, name, imgURL, users, email) {
 	}
 }
 
-async function deleteConversation() {
+async function deleteConversation(id) {
 	try {
 		const response = await db.collection('conversations').doc(id).delete();
 	} catch (error) {

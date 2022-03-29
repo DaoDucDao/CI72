@@ -21,6 +21,9 @@ class SidebarItem {
 	$creator;
 
 	$item;
+
+	$callBackUpdate;
+	$callBackDelete;
 	// conversation {
 	// 	id,
 	// 	name,
@@ -29,9 +32,7 @@ class SidebarItem {
 	// 	creator
 	// }
 
-	constructor(conversation) {
-		this.$item = conversation;
-
+	constructor(conversation, callBackUpdateFunction, callBackDeleteFunction) {
 		this.$container = document.createElement('div');
 		this.$container.classList.add('flex', 'cs-item');
 		this.$container.addEventListener('mouseleave', this.handleHiddenPopup);
@@ -61,19 +62,31 @@ class SidebarItem {
 		this.$buttonUpdate = document.createElement('div');
 		this.$buttonUpdate.classList.add('btn-popup');
 		this.$buttonUpdate.innerText = 'Update';
+		this.$buttonUpdate.addEventListener('click', this.handleUpdate);
 
 		this.$buttonDelete = document.createElement('div');
 		this.$buttonDelete.classList.add('btn-popup');
 		this.$buttonDelete.innerText = 'Delete';
+		this.$buttonDelete.addEventListener('click', this.handleDelete);
 
 		// console.log(conversation);
 
 		//setup data
-		this.setUpData(this.$item);
+		this.setUpData(
+			conversation,
+			callBackUpdateFunction,
+			callBackDeleteFunction
+		);
 	}
 
-	setUpData = (cons) => {
-		console.log(cons);
+	handleUpdate = () => {
+		this.$callBackUpdate(this.$item);
+	};
+	handleDelete = () => {
+		this.$callBackDelete(this.$id, this.$name);
+	};
+
+	setUpData = (cons, callBackUpdateFunction, callBackDeleteFunction) => {
 		this.$id = cons.id;
 		this.$name = cons.name;
 		this.$imageUrl = cons.imgURL;
@@ -81,14 +94,19 @@ class SidebarItem {
 		this.$users = cons.users;
 		this.$creator = cons.creator;
 
+		this.$item = cons;
+
+		this.$callBackUpdate = callBackUpdateFunction;
+		this.$callBackDelete = callBackDeleteFunction;
+		// Here we only fetch the data from firebase, we haven't display them in text, that why we need the function below
 		this.fillDataToEle();
-	};
+	}; //We need this function with 2 callBack so that every time we update the data, we update everything along with it
 
 	fillDataToEle = () => {
 		this.$imageEle.style.backgroundImage = `url(${this.$imageUrl})`; //this bug due to the privacy of the image on fucking Google
 		this.$nameEle.innerText = this.$name;
 		this.$descEle.innerText = this.$description;
-	};
+	}; //This function render the data in to text
 
 	handleHiddenPopup = () => {
 		if (this.$popupContainer.classList.contains('show')) {
@@ -103,6 +121,10 @@ class SidebarItem {
 		} else {
 			this.$popupContainer.classList.add('show');
 		}
+	};
+
+	unMount = () => {
+		this.$container.remove();
 	};
 
 	render() {
@@ -122,4 +144,3 @@ class SidebarItem {
 }
 
 export default SidebarItem;
-// 1h49'48s

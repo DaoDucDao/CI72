@@ -11,6 +11,7 @@ class SidebarItem {
 	$buttonMore;
 	$buttonUpdate;
 	$buttonDelete;
+	$buttonAdd;
 
 	//Data
 	$id;
@@ -24,6 +25,8 @@ class SidebarItem {
 
 	$callBackUpdate;
 	$callBackDelete;
+	$callBackAdd;
+	$callBackActive;
 	// conversation {
 	// 	id,
 	// 	name,
@@ -32,10 +35,17 @@ class SidebarItem {
 	// 	creator
 	// }
 
-	constructor(conversation, callBackUpdateFunction, callBackDeleteFunction) {
+	constructor(
+		conversation,
+		callBackAddFunction,
+		callBackUpdateFunction,
+		callBackDeleteFunction,
+		callBackActiveFunction
+	) {
 		this.$container = document.createElement('div');
 		this.$container.classList.add('flex', 'cs-item');
 		this.$container.addEventListener('mouseleave', this.handleHiddenPopup);
+		this.$container.addEventListener('click', this.handleActive);
 
 		this.$imageEle = document.createElement('img');
 		this.$imageEle.classList.add('cs-avatar');
@@ -64,6 +74,11 @@ class SidebarItem {
 		this.$buttonUpdate.innerText = 'Update';
 		this.$buttonUpdate.addEventListener('click', this.handleUpdate);
 
+		this.$buttonAdd = document.createElement('div');
+		this.$buttonAdd.classList.add('btn-popup');
+		this.$buttonAdd.innerText = 'Add user';
+		this.$buttonAdd.addEventListener('click', this.handleAdd);
+
 		this.$buttonDelete = document.createElement('div');
 		this.$buttonDelete.classList.add('btn-popup');
 		this.$buttonDelete.innerText = 'Delete';
@@ -74,8 +89,10 @@ class SidebarItem {
 		//setup data
 		this.setUpData(
 			conversation,
+			callBackAddFunction,
 			callBackUpdateFunction,
-			callBackDeleteFunction
+			callBackDeleteFunction,
+			callBackActiveFunction
 		);
 	}
 
@@ -86,7 +103,21 @@ class SidebarItem {
 		this.$callBackDelete(this.$id, this.$name);
 	};
 
-	setUpData = (cons, callBackUpdateFunction, callBackDeleteFunction) => {
+	handleAdd = () => {
+		this.$callBackAdd(this.$item);
+	};
+
+	handleActive = () => {
+		this.$callBackActive(this.$item);
+	};
+
+	setUpData = (
+		cons,
+		callBackAddFunction,
+		callBackUpdateFunction,
+		callBackDeleteFunction,
+		callBackActiveFunction
+	) => {
 		this.$id = cons.id;
 		this.$name = cons.name;
 		this.$imageUrl = cons.imgURL;
@@ -98,6 +129,8 @@ class SidebarItem {
 
 		this.$callBackUpdate = callBackUpdateFunction;
 		this.$callBackDelete = callBackDeleteFunction;
+		this.$callBackAdd = callBackAddFunction;
+		this.$callBackActive = callBackActiveFunction;
 		// Here we only fetch the data from firebase, we haven't display them in text, that why we need the function below
 		this.fillDataToEle();
 	}; //We need this function with 2 callBack so that every time we update the data, we update everything along with it
@@ -138,7 +171,11 @@ class SidebarItem {
 
 		this.$buttonMore.append(this.$popupContainer);
 
-		this.$popupContainer.append(this.$buttonUpdate, this.$buttonDelete);
+		this.$popupContainer.append(
+			this.$buttonAdd,
+			this.$buttonUpdate,
+			this.$buttonDelete
+		);
 		return this.$container;
 	}
 }

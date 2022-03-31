@@ -2,6 +2,7 @@ import { checkName } from '../../../common/validation.js';
 import SidebarItem from './sidebar-item.js';
 import * as _noti from '../../../common/notify.js';
 import {
+	confirmAddUserByEmail,
 	createConversation,
 	deleteConversation,
 	updateConversation,
@@ -23,7 +24,11 @@ class sideBarComponent {
 
 	$updateConversation;
 
-	constructor() {
+	$callBackActive;
+
+	constructor(callBackActive) {
+		this.$callBackActive = callBackActive;
+
 		this.$container = document.createElement('div');
 		this.$container.classList.add('sidebar-container', 'd-flex');
 
@@ -66,6 +71,18 @@ class sideBarComponent {
 		);
 	};
 
+	handleAddCon = async (item) => {
+		try {
+			const response = await confirmAddUserByEmail(item);
+		} catch (error) {
+			_noti.error(error.code, error.message);
+		}
+	};
+	// TODO:
+	handleActiveCon = (item) => {
+		this.$callBackActive(item);
+	};
+
 	setUpConversationListener() {
 		const user = getCurrentUser();
 		db.collection('conversations')
@@ -81,8 +98,10 @@ class sideBarComponent {
 						};
 						const addedConversation = new SidebarItem(
 							newConversation,
+							this.handleAddCon,
 							this.handleUpdateCon,
-							this.handleDeleteCon
+							this.handleDeleteCon,
+							this.handleActiveCon
 						);
 
 						// this.$listItems.push(addedConversation); //we dont need to render() here because the addedConversation is an object that we push inside the array
@@ -108,8 +127,10 @@ class sideBarComponent {
 									...change.doc.data(),
 									id: change.doc.id,
 								},
+								this.handleAddCon,
 								this.handleUpdateCon,
-								this.handleDeleteCon
+								this.handleDeleteCon,
+								this.handleActiveCon
 							);
 						}
 					}

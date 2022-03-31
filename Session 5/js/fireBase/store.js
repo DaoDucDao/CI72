@@ -19,7 +19,6 @@ async function createUser(email, password, name, phone, imgURL) {
 		throw error;
 	}
 }
-
 async function getUserByEmail(email) {
 	// Because to functioning with firebase data so we need to try catch it
 	// console.log(email);
@@ -113,6 +112,76 @@ async function deleteConversation(id) {
 	}
 }
 
+async function addUserByEmail(conversation, newEmail) {
+	try {
+		const response = await db
+			.collection('conversations')
+			.doc(conversation.id)
+			.update({
+				...conversation,
+				users: [...conversation.users, newEmail],
+				updateAt: new Date().getTime(),
+			});
+		console.log(response);
+	} catch (error) {
+		let errorCode = error.code;
+		let errorMessage = error.message;
+		console.log(errorCode, errorMessage);
+		throw error;
+	}
+}
+
+async function confirmAddUserByEmail(conversation) {
+	try {
+		const result = await Swal.fire({
+			title: 'Submit your email...',
+			input: 'text',
+			inputAttributes: {
+				autocapitalize: 'off',
+			},
+			showCancelButton: true,
+			confirmButtonText: 'Add',
+			showLoaderOnConfirm: true,
+			preConfirm: async (email) => {
+				const user = await getUserByEmail(email);
+				return user;
+			},
+			allowOutsideClick: () => !Swal.isLoading(),
+		});
+
+		if (result.value) {
+			const { email } = result.value;
+			const respose = await addUserByEmail(conversation, email);
+		} else {
+			_noti.error('Oops...', 'Your email is not exist!');
+			return null;
+		}
+	} catch (error) {
+		let errorCode = error.code;
+		let errorMessage = error.message;
+		console.log(errorCode, errorMessage);
+		throw error;
+	}
+}
+
+async function sendMessage(sender, content, conversationId, imgURL) {
+	try {
+		const response = await db.collection('message').add({
+			sender,
+			content,
+			conversationId,
+			sendAt: firebase.firestore.FieldValue.serverTimestamp(),
+			avatar: imgURL,
+		});
+		console.log(response);
+	} catch (error) {
+		let errorCode = error.code;
+		let errorMessage = error.message;
+		console.log(errorCode, errorMessage);
+		throw error;
+	}
+}
+
 export {
 	createUser,
 	getUserByEmail,
@@ -120,4 +189,6 @@ export {
 	createConversation,
 	updateConversation,
 	deleteConversation,
+	confirmAddUserByEmail,
+	sendMessage,
 };

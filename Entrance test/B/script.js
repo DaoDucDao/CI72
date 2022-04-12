@@ -1,6 +1,7 @@
 let form = document.getElementById('form');
 let link = document.getElementById('input').value;
 let container = document.getElementById('container');
+let result = document.getElementById('result');
 form.addEventListener('submit', handleSubmit);
 
 function handleSubmit(e) {
@@ -11,10 +12,10 @@ function handleSubmit(e) {
 		.then((data) => {
 			e.target.input.value = '';
 			console.log(data.result.short_link);
-			let text = document.createElement('p');
-			text.innerText = `The link is: ${data.result.short_link}`;
-			console.log(text);
-			container.appendChild(text);
-			return container;
+			if (!value) {
+				result.innerText = 'No link available!';
+			} else {
+				result.innerText = `The shortened link is: ${data.result.short_link}`;
+			}
 		});
 }

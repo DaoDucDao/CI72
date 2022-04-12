@@ -39,7 +39,7 @@ class Composer {
 			if (this.$activeConversation) {
 				const { value } = e.target.contentMsg;
 				const user = getCurrentUser();
-				await sendMessage(user.email, value, this.$activeConversation.id);
+				await sendMessage(user.email, value, this.$activeConversation.id, '');
 			}
 		} catch (error) {
 			_noti.error(error.code, error.message);

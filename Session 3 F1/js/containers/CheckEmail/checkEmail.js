@@ -21,12 +21,12 @@ class CheckEmailScreen {
             <div class="col-5 text-center mail">
                 <h1>Confirm your email!</h1>
                 <p>
-                Your Account have been suscessfully regitered. To complete the
+                Your Account have been successfully registered. To complete the
                 process, please check your email for a validation request
                 </p>
                 <p>
                 If you wait it too long. You can
-                <a class='link'>click here</a> to login
+                <a href="mailto:"  class='link'>click here</a> to login
                 </p>
             </div>
             </div>

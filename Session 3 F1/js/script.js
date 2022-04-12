@@ -24,8 +24,8 @@ class App {
 		}
 	}
 }
-const signUp = new RegisterScreen();
+const signIn = new LoginScreen();
 const app = new App();
 const checkEmailScreen = new CheckEmailScreen();
-app.changeActiveScreen(signUp);
+app.changeActiveScreen(signIn);
 export default app;

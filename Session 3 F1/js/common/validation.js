@@ -9,7 +9,7 @@ export const checkEmail = (email) => {
 		// return 'Email is Invalid!';
 	}
 	// return false;
-	return null;
+	return true;
 };
 export const checkPassword = (password) => {
 	if (!password || password.length === 0) {
@@ -20,5 +20,5 @@ export const checkPassword = (password) => {
 		return 'Password is not strong enough!!';
 	}
 	// return false;
-	return null;
+	return true;
 };

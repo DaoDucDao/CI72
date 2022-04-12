@@ -1,8 +1,10 @@
 import InputComponent from '../../components/input.js';
 import ButtonComponent from '../../components/button.js';
 import LoginScreen from '../Login/login.js';
+import CheckEmailScreen from '../CheckEmail/checkEmail.js';
 import app from '../../script.js';
 import { checkEmail, checkPassword } from '../../common/validation.js';
+import { createNewAccount } from '../../fireBase/authentication.js';
 class RegisterScreen {
 	$email;
 	$password;
@@ -69,13 +71,13 @@ class RegisterScreen {
 		app.changeActiveScreen(login);
 	};
 
-	handleSubmit = (e) => {
+	handleSubmit = async (e) => {
 		e.preventDefault();
 		const { email, password, rePassword } = e.target;
 		let isError = false;
 
 		// console.log('email', email.value, 'password', password.value);
-		if (checkEmail(email.value) !== null) {
+		if (!checkEmail(email.value)) {
 			// console.log('Email is Invalid!');
 			this.$email.setError(checkEmail(email.value));
 			isError = true;
@@ -83,7 +85,7 @@ class RegisterScreen {
 			this.$email.setError('');
 		}
 
-		if (checkPassword(password.value) !== null) {
+		if (!checkPassword(password.value)) {
 			// console.log('Password is Invalid!');
 			this.$password.setError(checkPassword(password.value));
 			isError = true;
@@ -104,6 +106,9 @@ class RegisterScreen {
 
 		if (!isError) {
 			console.log('Success!');
+			await createNewAccount(email.value, password.value);
+			const checkScreen = new CheckEmailScreen();
+			app.changeActiveScreen(checkScreen);
 		}
 	};
 	render() {

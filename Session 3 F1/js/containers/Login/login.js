@@ -3,6 +3,7 @@ import ButtonComponent from '../../components/button.js';
 import RegisterScreen from '../Register/register.js';
 import app from '../../script.js';
 import { checkEmail, checkPassword } from '../../common/validation.js';
+import { loginWithEmailPassword } from '../../fireBase/authentication.js';
 class LoginScreen {
 	$email;
 	$password;
@@ -68,20 +69,28 @@ class LoginScreen {
 		let isError = false;
 
 		// console.log('email', email.value, 'password', password.value);
-		if (!checkEmail(email.value)) {
+		if (checkEmail(email.value) !== null) {
 			// console.log('Email is Invalid!');
 			this.$email.setError(checkEmail(email.value));
 			isError = true;
+		} else {
+			this.$email.setError('');
 		}
-		if (!checkPassword(password.value)) {
+		if (checkPassword(password.value) !== null) {
 			// console.log('Password is Invalid!');
 			this.$password.setError(checkPassword(password.value));
 			isError = true;
+		} else {
+			this.$password.setError('');
 		}
 		if (!isError) {
 			console.log('Success!');
+			loginWithEmailPassword(email.value, password.value);
 		}
 	};
+
+	setLoading() {}
+
 	render() {
 		this.$formLogin.append(
 			this.$titleScreen,
